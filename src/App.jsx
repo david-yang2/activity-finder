@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import InputComponent from '../components/InputComponent';
 import ResponseComponent from '../components/ResponseComponent';
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
-
+import { postRequest } from '../utils/api';
 
 
 const App = () => {
@@ -33,7 +33,7 @@ const App = () => {
           userInput={userInput}
           setUserInput={setUserInput} />
       <ResponseComponent response={response} />
-      <div>{test}</div>
+      <button onClick={() => postRequest(userInput)}>Send POST Request</button>
     </div>
   );
 };
