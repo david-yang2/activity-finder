@@ -8,9 +8,13 @@ const InputComponent = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // array of object activities
-    const activitySuggestions = await postRequest(userInput);
-    setResponse(activitySuggestions);
-  }
+    try {
+      const activitySuggestions = await postRequest(userInput);
+      setResponse(activitySuggestions);
+    } catch (error) {
+      setResponse({ error: error.message });
+    }
+  };
 
   return (
     <div>

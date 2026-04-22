@@ -68,9 +68,7 @@ export const submitAIrequest = async (userPrompt) => {
     const activitySuggestions = aiResponse.choices[0].message.content;
     return activitySuggestions;
   } catch (error) {
-    console.error("Error communicating with OpenAI API:", error);
-    throw new Error(
-      "Failed to get a response from the AI model. Please try again later.",
-    );
+    // console.error("Error communicating with AI model:", error);
+    throw new Error(JSON.stringify(error));
   }
 };

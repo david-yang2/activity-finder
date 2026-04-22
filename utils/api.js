@@ -1,6 +1,6 @@
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
-import { marked } from "marked"
-import DOMPurify from "dompurify"
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 export const postRequest = async (data) => {
   try {
@@ -9,10 +9,20 @@ export const postRequest = async (data) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({message:data}),
+      body: JSON.stringify({ message: data }),
     });
+
+    if (!response.ok) {
+      // The server responded with an error status
+      const errorResult = await response.json();
+      console.error("Server error:", errorResult);
+      throw new Error(
+        errorResult.details || errorResult.error || "Unknown server error",
+      );
+    }
+
     const result = await response.json();
-    
+    console.log(result);
     // sanitize the response (which is a stringified JSON) to prevent XSS attacks, then parse it into a JavaScript object and return it
     const sanitizedResults = DOMPurify.sanitize(result.activitySuggestions);
 
