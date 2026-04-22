@@ -1,27 +1,33 @@
-import { postRequest } from '../utils/api';
+import { postRequest } from "../utils/api";
 
-const InputComponent = ({ userInput, setUserInput }) => {
-   
+const InputComponent = (props) => {
+  const { userInput, setUserInput, setResponse } = props;
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        postRequest(userInput);
-    }
+  // Function to handle form submission
+  // send user prompt to backend
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // array of object activities
+    const activitySuggestions = await postRequest(userInput);
+    setResponse(activitySuggestions);
+  }
 
   return (
     <div>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4">
+      {/* Form for user prompt input */}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
           placeholder="Enter your input"
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
         />
-        <button type="submit"
-               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
-               onClick={()=>handleSubmit()}>Submit</button>
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );

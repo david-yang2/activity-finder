@@ -2,11 +2,12 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { submitAIrequest } from "./utils/AIModel.js";
+import helmet from "helmet";
 
 const PORT = 8000;
 const app = express();
 
-// console.log(process.env.TEST);
+app.use(helmet());
 
 app.use(
   cors({
@@ -21,10 +22,12 @@ app.get("/", (req, res) => {
   res.json("this is another test of response!");
 });
 
-app.post("/test", (req, res) => {
+app.post("/test", async (req, res) => {
 // get user input from req.body and send it to the AI model, then return the response from the AI model to the frontend
-  submitAIrequest(req.body.message);
-  res.json("this is a test of response! Your message was: " + JSON.stringify(req.body.message));
+const activitySuggestions = await submitAIrequest(req.body.message);
+res.json({activitySuggestions});
+console.log("response sent")
+  
 });
 
 app.listen(PORT, () => {
