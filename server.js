@@ -22,19 +22,21 @@ app.get("/", (req, res) => {
   res.json("this is another test of response!");
 });
 
-app.post("/test", async (req, res) => {
+app.post("/api/openai", async (req, res) => {
 
   try {
 
     // get user input from req.body and send it to the AI model, then return the response from the AI model to the frontend
-    const activitySuggestions = await submitAIrequest(req.body.message);
+    const activitySuggestions = await submitAIrequest(req.body);
     res.json({activitySuggestions});
   } catch (error){
-    // parse error message(a stringified JSON) to access failed_generation
-    const parsedError = JSON.parse(error.message);
-    console.error(parsedError)
-    console.error(parsedError.error.failed_generation)
-    res.status(500).json({ error: "An error occurred while processing your request.", details: parsedError.error.failed_generation });
+    console.log("server.js --", error.message);
+
+    
+    const extractRemainingTime = error.message.match(/in (\d+m\d+)/);
+    console.log(extractRemainingTime); // ["in 6m23.616s", "6m23.616s"]
+    const time = extractRemainingTime ? extractRemainingTime[1] : null;
+    res.status(error.status).json({ error: `Unfortunately the token limit has been exceeded. Please try again in ${time}s.` });
 
   }
 
