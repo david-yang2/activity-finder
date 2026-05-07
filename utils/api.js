@@ -1,10 +1,25 @@
-const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
-import { marked } from "marked";
+const RAW_BASE_URL = (import.meta.env.VITE_BASE_URL || "").trim();
+
 import DOMPurify from "dompurify";
+
+
+const getApiURL = () => {
+  if (typeof window !== "undefined") {
+    const isProdHost = window.location.hostname !== "localhost";
+    const isLocalBase = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i.test(
+      RAW_BASE_URL,
+    );
+    if (isProdHost && isLocalBase) {
+      return "/api/openai";
+    }
+  }
+  return `${RAW_BASE_URL}/api/openai`;
+};
+
 
 export const postRequest = async (data, distance) => {
   try {
-    const response = await fetch(VITE_BASE_URL + "/api/openai", {
+    const response = await fetch(getApiURL(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,14 +35,11 @@ export const postRequest = async (data, distance) => {
     }
 
     const result = await response.json();
-    console.log(result);
     // sanitize the response (which is a stringified JSON) to prevent XSS attacks, then parse it into a JavaScript object and return it
     const sanitizedResults = DOMPurify.sanitize(result.activitySuggestions);
-    console.log(sanitizedResults);
 
     // parse the sanitized string into a JavaScript object
     const parsedResults = JSON.parse(sanitizedResults);
-    console.log(parsedResults);
     return parsedResults;
   } catch (error) {
     console.error("Error making POST request:", error);
