@@ -1,6 +1,6 @@
-        @tailwind base;
-        @tailwind components;
-        @tailwind utilities;
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
 
 * {
   margin: 0;
@@ -10,4 +10,10 @@
 html, body, #root {
   margin: 0;
   height: 100dvh;
+  width: 100dvw;
+}
+
+@keyframes progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
 }

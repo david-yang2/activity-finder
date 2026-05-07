@@ -30,13 +30,14 @@ app.post("/api/openai", async (req, res) => {
     const activitySuggestions = await submitAIrequest(req.body);
     res.json({activitySuggestions});
   } catch (error){
-    console.log("server.js --", error.message);
+    // console.log("server.js --", error.message);
 
-    
+    console.error("Error in /api/openai route:", error);
     const extractRemainingTime = error.message.match(/in (\d+m\d+)/);
-    console.log(extractRemainingTime); // ["in 6m23.616s", "6m23.616s"]
-    const time = extractRemainingTime ? extractRemainingTime[1] : null;
-    res.status(error.status).json({ error: `Unfortunately the token limit has been exceeded. Please try again in ${time}s.` });
+
+    // if no time is extracted, default to "later"
+    const time = extractRemainingTime ? extractRemainingTime[1] : "later";
+    res.status(error.status).json({ error: `Unfortunately the token limit has been exceeded. Please try again in ${time}${time === "later" ? '':'s'}.` });
 
   }
 

@@ -25,7 +25,7 @@ const InputComponent = (props) => {
     <div className="w-full max-w-2xl bg-blue-300/30 rounded-lg shadow-lg p-2">
       {/* <div className="text-white text-xl">Ask away!</div> */}
       {/* Form for user prompt input */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 ">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <textarea
           className="px-2 py-3 rounded-lg text-base placeholder:text-sm"
           type="text"

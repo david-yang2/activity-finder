@@ -1,57 +1,61 @@
-import { useState, useEffect } from 'react';
-import InputComponent from '../components/InputComponent';
-import ResponseComponent from '../components/ResponseComponent';
+import { useState, useEffect } from "react";
+import InputComponent from "./components/InputComponent";
+import ResponseComponent from "./components/ResponseComponent";
+import Header from "./components/Header";
+import LoadingComponent from "./components/LoadingComponent"
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
-
-
 
 const App = () => {
   const [response, setResponse] = useState(null);
-  const [userInput, setUserInput] = useState('');
-  const [test, setTest] = useState('')
+  const [userInput, setUserInput] = useState("");
+  const [test, setTest] = useState("");
+  const [distance, setDistance] = useState("5");
+    const [loadingResponse, setLoadingResponse] = useState(false)
 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(VITE_BASE_URL + '/', { method: 'GET' });
-        // console.log(res);
-        const data = await res.json();
-        console.log(data)
-        setTest(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await fetch(VITE_BASE_URL + '/', { method: 'GET' });
+  //       // console.log(res);
+  //       const data = await res.json();
+  //       console.log(data)
+  //       setTest(data);
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center p-4 relative"
+    <div
+      className="min-h-screen w-full flex items-center justify-center p-4 relative"
       style={{
-        backgroundImage: 'url(/backgroundImg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
+        backgroundImage: "url(/backgroundImg.png)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
       }}
     >
-      <div className="absolute inset-0 bg-black/40"></div>
-      <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-8 relative z-10">
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
-          Ready to find your next activity?
-        </h1>
-        
-        <div className="flex flex-col gap-6">
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <InputComponent 
-                userInput={userInput}
-                setUserInput={setUserInput} />
-          </div>
+      {/* overlay */}
+      <div className="absolute inset-0 bg-black/40 z-10"></div>
+      <div className="h-screen w-full flex flex-col max-w-3xl z-20 justify-center items-center">
+        <Header />
+        <div
+          id="components"
+          className="flex flex-col w-full max-w-2xl gap-6 flex-grow overflow-hidden"
+        >
+          <InputComponent
+            userInput={userInput}
+            setUserInput={setUserInput}
+            setResponse={setResponse}
+            distance={distance}
+            setDistance={setDistance}
+            setLoadingResponse={setLoadingResponse}
+            loadingResponse={loadingResponse}
+          />
 
-          <div className="bg-gray-50 p-6 rounded-lg min-h-40">
-            <ResponseComponent response={response} />
-          </div>
+          {!loadingResponse ? <ResponseComponent response={response}/> : <LoadingComponent/>}
         </div>
       </div>
     </div>
