@@ -3,10 +3,14 @@ import express from "express";
 import cors from "cors";
 import { submitAIrequest } from "./utils/AIModel.js";
 import helmet from "helmet";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 const app = express();
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = path.join(__dirname, "dist");
 app.use(helmet());
 
 app.use(
@@ -38,6 +42,15 @@ app.post("/api/openai", async (req, res) => {
   }
 
   
+});
+
+// Serve Vite build output on Render (and other Node hosts).
+app.use(express.static(distPath));
+
+
+// SPA fallback so routes like /, /about, etc. all return index.html.
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
 });
 
 app.listen(PORT, () => {
