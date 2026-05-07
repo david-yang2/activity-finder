@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import InputComponent from "./components/InputComponent";
 import ResponseComponent from "./components/ResponseComponent";
 import Header from "./components/Header";
-import LoadingComponent from "./components/LoadingComponent"
+import LoadingComponent from "./components/LoadingComponent";
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const App = () => {
@@ -10,22 +10,7 @@ const App = () => {
   const [userInput, setUserInput] = useState("");
   const [test, setTest] = useState("");
   const [distance, setDistance] = useState("5");
-    const [loadingResponse, setLoadingResponse] = useState(false)
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await fetch(VITE_BASE_URL + '/', { method: 'GET' });
-  //       // console.log(res);
-  //       const data = await res.json();
-  //       console.log(data)
-  //       setTest(data);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  const [loadingResponse, setLoadingResponse] = useState(false);
 
   return (
     <div
@@ -55,7 +40,11 @@ const App = () => {
             loadingResponse={loadingResponse}
           />
 
-          {!loadingResponse ? <ResponseComponent response={response}/> : <LoadingComponent/>}
+          {!loadingResponse ? (
+            <ResponseComponent response={response} />
+          ) : (
+            <LoadingComponent />
+          )}
         </div>
       </div>
     </div>

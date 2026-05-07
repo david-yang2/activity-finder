@@ -8,7 +8,6 @@ const InputComponent = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoadingResponse(true)
-    console.log("beginning loading", loadingResponse)
     // array of object activities
     try {
       const activitySuggestions = await postRequest(userInput, distance);
@@ -17,7 +16,6 @@ const InputComponent = (props) => {
       setResponse({ error: error.message });
     } finally {
       setLoadingResponse(false)
-      console.log("finally", loadingResponse)
     }
   };
 

@@ -18,9 +18,6 @@ app.use(
 app.use(express.json());
 
 
-app.get("/", (req, res) => {
-  res.json("this is another test of response!");
-});
 
 app.post("/api/openai", async (req, res) => {
 
@@ -30,7 +27,6 @@ app.post("/api/openai", async (req, res) => {
     const activitySuggestions = await submitAIrequest(req.body);
     res.json({activitySuggestions});
   } catch (error){
-    // console.log("server.js --", error.message);
 
     console.error("Error in /api/openai route:", error);
     const extractRemainingTime = error.message.match(/in (\d+m\d+)/);

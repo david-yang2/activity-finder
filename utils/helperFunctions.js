@@ -4,7 +4,7 @@ export async function getLocation() {
     const text = await response.json();
     return JSON.stringify(text);
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 }
 
