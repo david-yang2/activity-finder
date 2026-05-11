@@ -1,63 +1,100 @@
-import "dotenv/config";
-import OpenAI from "openai";
+import "dotenv/config"
+import OpenAI from "openai"
+import {getWeatherByCity, tools} from "./helperFunctions.js"
 
 export const submitAIrequest = async (payload) => {
-  const aiClient = new OpenAI({
+    const aiClient = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     baseURL: process.env.OPENAI_BASE_URL,
   });
 
-  const prompt = `
-      You are an activity suggestion assistant. You will be given a user's location and the weather for their location. Using the user's location and weather, you will suggest at maximum of 5 activities within ${payload.distance} miles of the user's location. Find activities for the day that the user explicitly asks for. For example, if the user asks for activities for tomorrow, you will find activities that are occurring tomorrow. If the user asks for activities for the weekend, you will find activities that are occurring on this upcoming Saturday and Sunday. If the user does not specify a date, you will find activities that are occurring today.
+  const availableFunctions = {
+    getWeatherByCity
+  }
 
-      Prioritize special events or unique experiences. These can include concerts, festivals, pop-up markets, museum exhibitions, community gatherings, or other unique happenings. Avoid generic activities like "go to a park" or "visit a museum" unless there is a specific event at that location.
+  console.log(payload)
 
-      You will only suggest activities that are suitable for the weather. For example, if the weather is rainy, you will not suggest outdoor activities. However, if the weather is sunny, you can suggest both indoor and outdoor activities. You will also display the date when the activity is occurring.
+  const prompt = ` 
+  "When a user asks a question, identify the city mentioned in their query and use it as the 'location' parameter for getWeatherByCity. If no city is mentioned, respond with a request for the user's city."
+  Extract the city name from the user's question. If a city is mentioned, return it as the value for 'location'.
 
-      When using web_search_preview:
-      - Use at most 2 sources
-      - Extract only key details (name, date, location, short description)
-      - only use search result summaries as context for reasoning
-      - Do NOT include long text from articles
+  example:
+  User: "What should I do in Los Angeles today?"
+Extracted location: "Los Angeles"
 
-      Respond ONLY with a valid JSON array of objects, no explanation or extra text. Each object must have:
-        - Activity Name (string)
-        - Description (string)
-        - Location (string)
-        - Date and Time Occurring (string in ISO format)
-        - Cost (string)
+  You cycle through Thought, Action, PAUSE, obersavation. At the end of the loop, you will output a final Answer. 
+
+  1. Thought: Describe your thoughts about the question you have been asked. 
+  2. Action: run one of the actions available to you - then return PAUSE
+  3. PAUSE
+  4. Observation: will be the result of running those actions
 
 
+  Available Actions:
+    - getWeatherByCity:
+      E.g. getWeatherByCity: Los Angeles
+      Returns the current weather of location specified
 
-      Here is an example response:
-      [
-        {
-          "Activity Name": "Picnic in the Park",
-          "Description": "Enjoy a relaxing picnic with friends or family in a nearby park. Bring your favorite snacks and a blanket to sit on.",
-          "Location": "Local Park",
-          "Date and Time Occurring",
-          "Cost": "Free"
-      }]
 
-      If there are no special events, you may recommend generic events. Limit the description to a maximum of 1 sentence.
+  Question: What should I do in Los Angeles today?
+  Thought: I should use the user's location and fetch the weather.
+  Action: getWeatherByCity : Los Angeles
+  PAUSE
 
-      Do not include citation markers or references in your responses. 
+  You'll then be called again with something like this:
+  Observation { location: "Los Angeles"}
 
-      User: ${payload.message}
-    `;
+  The output should be the user's original query with the temperature appended to it.
+  Answer: What should I do in Los Angeles today? It is 72 degrees fareinheit.
 
-  const aiResponse = await aiClient.responses.create({
-    model: process.env.OPENAI_MODEL,
-    input: prompt,
-    tools: [{ type: "web_search_preview" }],
-  });
+  `
 
-  let activitySuggestions = aiResponse.output_text;
-  if (typeof activitySuggestions === "string") {
-    const match = activitySuggestions.match(/\[.*\]/s);
-    if (match) {
-      activitySuggestions = match[0];
+  const messages = [
+    {role:"system",
+    content:prompt
+    },
+    {role:"user",
+      content:payload.message
+    }
+  ]
+
+
+  const maxIterations = 5
+
+  for (let i = 0; i< maxIterations; i++) {
+
+    const initialResponse = await aiClient.chat.completions.create({
+      model: process.env.OPENAI_MODEL,
+      messages,
+      tools
+    })
+
+    const response = await initialResponse;
+    // console.log("this is the response", response)
+    const {finish_reason: finishReason, message} = response.choices[0];
+    const {tool_calls: toolCalls} = message
+
+    messages.push(message)
+
+    if (finishReason === "stop"){
+      console.log(message.content)
+      return
+    } else if (finishReason === "tool_calls") {
+      for (const toolCall of toolCalls) {
+        const functionName = toolCall.function.name
+        const functionToCall = availableFunctions[functionName]
+        const functionArgs = JSON.parse(toolCall.function.arguments)
+        const functionResponse = await functionToCall(functionArgs)
+        console.log("this is the funciton response", functionResponse)
+        messages.push({
+          tool_call_id: toolCall.id,
+          role:"tool",
+          name: functionName,
+          content: typeof functionResponse === "string" ? functionResponse : JSON.stringify(functionResponse)
+        })
+      }
     }
   }
-  return activitySuggestions;
+
+
 };
