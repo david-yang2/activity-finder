@@ -1,6 +1,8 @@
 import "dotenv/config";
 import OpenAI from "openai";
-import { getWeatherByCity, getLocation, tools } from "./helperFunctions.js";
+import { getWeatherByCity, tools } from "./helperFunctions.js";
+
+// JSON Schema for getWeatherModel output
 
 export const getWeatherModel = async (query) => {
   const aiClient = new OpenAI({
@@ -10,24 +12,50 @@ export const getWeatherModel = async (query) => {
 
   const availableFunctions = {
     getWeatherByCity,
-    // getLocation
   };
 
-
   const prompt = ` 
-    "When a user asks a question, identify the city mentioned in their query and use it as the 'location' parameter for getWeatherByCity. If no city is mentioned, respond with a request for the user's city."
-    Extract the city name from the user's question. If a city is mentioned, return it as the value for 'location'.
-    
-    example:
-    User: "What should I do in Los Angeles today?"
-    Extracted location: "Los Angeles"
+    "You are a weather response generator.
+
+    Your ONLY job:
+    - Extract the user's query
+    - Extract location (city)
+    - Extract timeframe
+    - Use the weather observation provided
+
+    DO NOT suggest activities.
+    DO NOT add extra information.
+    DO NOT explain anything.
+
+    Return ONLY one single sentence.
+
+    Format:
+    "<original user query> it's <temperature summary>"
+
+    Examples:
+
+    User: What should I do in Los Angeles this weekend?
+    Output:
+    "What should I do in Los Angeles this weekend? it's a high of 76°F on Saturday and 75.6°F on Sunday, with lows of 62.1°F and 63°F."
+
+    User: What is the weather in Los Angeles today?
+    Output:
+    "What is the weather in Los Angeles today? it's 74°F."
+
+    Rules:
+    - Output must be ONE sentence only
+    - No lists
+    - No recommendations
+    - No extra paragraphs
+    - No line breaks
+
     
     You cycle through Thought, Action, PAUSE, obersavation. At the end of the loop, you will output a final Answer. 
     
     1. Thought: Describe your thoughts about the question you have been asked. 
-    2. Action: run one of the actions available to you - then return PAUSE
+    2. Action: getWeatherByLocation: Los Angeles, today
     3. PAUSE
-    4. Observation: will be the result of running those actions
+    4. Observation: you'll get called again with something like this {"location":"Los Angeles", "timeframe": "today"}
     
     
     Available Actions:
@@ -36,19 +64,17 @@ export const getWeatherModel = async (query) => {
     Returns the current weather of location specified
     
     
-    Question: What should I do in Los Angeles today?
-    Thought: I should use the user's location and fetch the weather.
+    Question: What is the weather in Los Angeles today?
+    Thought: I should use the user's location, get the timeframe and fetch the weather for given timeframe.
     Action: getWeatherByCity : Los Angeles
     PAUSE
     
     You'll then be called again with something like this:
-    Observation { location: "Los Angeles"}
-    
-    The output should be a single string with the user's original query and the temperature appended to it.
-    example final message.content: What should I do in Los Angeles today? It is 72 degrees fareinheit.
+    Observation { location: "Los Angeles", start_date:"2026-05-13", end_date:"2026-05-13
     
     `;
-  console.log(query)
+  
+  console.log(query);
   const messages = [
     { role: "system", content: prompt },
     { role: "user", content: query },
@@ -71,12 +97,19 @@ export const getWeatherModel = async (query) => {
     messages.push(message);
 
     if (finishReason === "stop") {
-        console.log(message.content)
+      console.log(message);
       return message.content;
     } else if (finishReason === "tool_calls") {
       for (const toolCall of toolCalls) {
+        console.log("this is ", i, message);
         const functionName = toolCall.function.name;
         const functionToCall = availableFunctions[functionName];
+        console.log(
+          "this is the function name",
+          functionName,
+          "and this is the functions args",
+          toolCall.function.arguments,
+        );
         const functionArgs = JSON.parse(toolCall.function.arguments);
         const functionResponse = await functionToCall(functionArgs);
 
