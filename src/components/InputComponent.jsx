@@ -27,7 +27,7 @@ const InputComponent = (props) => {
         <textarea
           className="px-2 py-3 rounded-lg text-base placeholder:text-sm"
           type="text"
-          placeholder="e.g. It's a sunny day in San Diego, and I'm in the mood for something fun to do with friends."
+          placeholder="e.g. Outdoor activities for kids in San Diego"
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
         />

@@ -6,8 +6,7 @@ const Header = () => {
           Find your next activity
         </h1>
         <div className="text-white">
-          Tell us what you're in the mood for, choose the distance you're
-          willing to travel, and we'll take care of the rest!
+          Tell us your mood, city, day, and distance—let us handle the rest!
         </div>
       </div>
     </div>
