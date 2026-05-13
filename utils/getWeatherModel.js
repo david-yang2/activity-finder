@@ -1,6 +1,6 @@
 import "dotenv/config";
 import OpenAI from "openai";
-import { getWeatherByCity, tools } from "./helperFunctions.js";
+import { getWeatherByCity, getLocation, tools } from "./helperFunctions.js";
 
 export const getWeatherModel = async (query) => {
   const aiClient = new OpenAI({
@@ -10,6 +10,7 @@ export const getWeatherModel = async (query) => {
 
   const availableFunctions = {
     getWeatherByCity,
+    // getLocation
   };
 
 
@@ -47,7 +48,7 @@ export const getWeatherModel = async (query) => {
     example final message.content: What should I do in Los Angeles today? It is 72 degrees fareinheit.
     
     `;
-
+  console.log(query)
   const messages = [
     { role: "system", content: prompt },
     { role: "user", content: query },
@@ -70,6 +71,7 @@ export const getWeatherModel = async (query) => {
     messages.push(message);
 
     if (finishReason === "stop") {
+        console.log(message.content)
       return message.content;
     } else if (finishReason === "tool_calls") {
       for (const toolCall of toolCalls) {
