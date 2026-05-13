@@ -2,7 +2,7 @@ import "dotenv/config";
 import OpenAI from "openai";
 
 export const webSearchModel = async (query, distance) => {
-    const aiClient = new OpenAI({
+  const aiClient = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     baseURL: process.env.OPENAI_BASE_URL,
   });
@@ -46,42 +46,48 @@ export const webSearchModel = async (query, distance) => {
       Do not include citation markers or references in your responses. 
 
       `;
-    //   User: ${query}
+  //   User: ${query}
   try {
-
-      const aiResponse = await aiClient.chat.completions.create({
-          model: 'groq/compound-mini',
-          messages: [{
-              
-              role: "system",
-              content: prompt
-            },
-            {
-                role:"user",
-                content:query
-            }
-            
+    const aiResponse = await aiClient.chat.completions.create({
+      model: "groq/compound-mini",
+      messages: [
+        {
+          role: "system",
+          content: prompt,
+        },
+        {
+          role: "user",
+          content: query,
+        },
+      ],
+      search_settings: {
+        include_domains: [
+          "https://meetup.com",
+          "https://www.eventbrite.com/",
+          "https://facebook.com",
+          "https://instagram.com",
+          "https://www.stubhub.com/",
+          "https://www.ticketmaster.com",
+          "https://reddit.com",
         ],
-        search_settings: {
-            include_domains: ["https://meetup.com", "https://www.eventbrite.com/", "https://facebook.com", "https://instagram.com", "https://www.stubhub.com/", "https://www.ticketmaster.com", "https://reddit.com"],
-            country: "united states"
-        }
-        // input: prompt,
-        // tools: [{ type: "web_search_preview",
-        //     "search_context_size": "low" 
-        // }],
+        country: "united states",
+      },
+      // input: prompt,
+      // tools: [{ type: "web_search_preview",
+      //     "search_context_size": "low"
+      // }],
     });
-    console.log(aiResponse.usage)
-    
+    console.log(aiResponse.usage);
+
     let activitySuggestions = aiResponse.choices[0].message.content;
     if (typeof activitySuggestions === "string") {
-        const match = activitySuggestions.match(/\[.*\]/s);
-        if (match) {
-            activitySuggestions = match[0];
-        }
+      const match = activitySuggestions.match(/\[.*\]/s);
+      if (match) {
+        activitySuggestions = match[0];
+      }
     }
     return activitySuggestions;
-} catch (err) {
-    console.error(err)
-}
-}   
+  } catch (err) {
+    console.error(err);
+  }
+};
