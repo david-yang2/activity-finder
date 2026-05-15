@@ -10,7 +10,12 @@ export const submitAIrequest = async (payload) => {
   let formattedResponse, finalResponse, formatWeatherRaw;
   try {
     formatWeatherRaw = await formatWeatherQuery(queryWithWeather);
+  try {
     formattedResponse = JSON.parse(formatWeatherRaw);
+  } catch (err) {
+    // Not valid JSON, likely a model error message
+    throw new Error("Model output was not valid JSON: " + formatWeatherRaw);
+  }
   } catch (err) {
     console.error("Error parsing model output in formatWeatherQuery. Raw output:", formatWeatherRaw);
     console.error(err);
@@ -22,7 +27,7 @@ export const submitAIrequest = async (payload) => {
   console.log(formattedResponse);
 
   // Defensive: check required properties
-  if (!formattedResponse || !formattedResponse.user_query || !formattedResponse.time || !formattedResponse.temperature_low || !formattedResponse.temperature_high) {
+  if (!formattedResponse || !formattedResponse.location || !formattedResponse.user_query || !formattedResponse.time || !formattedResponse.temperature_low || !formattedResponse.temperature_high) {
     const error = new Error("Model output missing required fields");
     error.status = 500;
     throw error;

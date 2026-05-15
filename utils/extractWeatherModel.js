@@ -23,9 +23,13 @@ export const extractWeatherModel = async (query) => {
     - Extract timeframe
     - Use the weather observation provided
 
-    If the user's query asks for any activities, DO NOT suggest activities.
+    If the user's query asks for any activities, ignore it and just extract user's location and timeframe
     DO NOT add extra information.
     DO NOT explain anything.
+
+    for exmaple:
+    If the user asks, "Outside activities for San Diego".
+    You will ignore the users request for actual outdoor activities and extract location and timeframe (assume today if none are given) to be used in getWeatherByCity
 
     Return ONLY one single sentence.
 
@@ -53,7 +57,7 @@ export const extractWeatherModel = async (query) => {
     You cycle through Thought, Action, PAUSE, obersavation. At the end of the loop, you will output a final Answer. 
     
     1. Thought: Describe your thoughts about the question you have been asked. 
-    2. Action: getWeatherByLocation: Los Angeles, today
+    2. Action: getWeatherByCity: Los Angeles, today
     3. PAUSE
     4. Observation: you'll get called again with something like this {"location":"Los Angeles", "timeframe": "today"}
     

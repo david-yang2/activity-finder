@@ -8,20 +8,20 @@ export async function getLocation() {
   }
 }
 
-function getDates( timeframe ) {
+function getDates(timeframe) {
   // use date object to extract index for today (e.g. Monday is index 1)
   const today = new Date();
   if (timeframe.includes("today")) {
     return {
-      start_date: today.toLocaleDateString('en-CA'),
-      end_date: today.toLocaleDateString('en-CA'),
+      start_date: today.toLocaleDateString("en-CA"),
+      end_date: today.toLocaleDateString("en-CA"),
     };
   } else if (timeframe.includes("tomorrow")) {
     const tomorrow = new Date(today.setDate(today.getDate() + 1));
 
     return {
-      start_date: tomorrow.toLocaleDateString('en-CA'),
-      end_date: tomorrow.toLocaleDateString('en-CA'),
+      start_date: tomorrow.toLocaleDateString("en-CA"),
+      end_date: tomorrow.toLocaleDateString("en-CA"),
     };
   } else if (timeframe.includes("weekend")) {
     const daysToSaturday = 6 - today.getDay();
@@ -31,17 +31,16 @@ function getDates( timeframe ) {
     const sunday = new Date(today.setDate(today.getDate() + 1));
 
     return {
-      start_date: saturday.toLocaleDateString('en-CA'),
-      end_date: sunday.toLocaleDateString('en-CA'),
+      start_date: saturday.toLocaleDateString("en-CA"),
+      end_date: sunday.toLocaleDateString("en-CA"),
     };
   }
-  const todaysDate = today.toLocaleDateString('en-CA');
+  const todaysDate = today.toLocaleDateString("en-CA");
   return { start_date: todaysDate, end_date: todaysDate };
 }
 
 export async function getWeatherByCity({ location, timeframe }) {
-
-  const {start_date, end_date} = getDates(timeframe)
+  const { start_date, end_date } = getDates(timeframe);
   // Geocoding—extract lat and lon
   const geoRes = await fetch(
     `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1`,
@@ -59,9 +58,9 @@ export async function getWeatherByCity({ location, timeframe }) {
   const weatherData = await weatherRes.json();
   // console.log("this is the weatherdata", weatherData);
   // console.log(weatherData.current_weather.temperature)
-  const time = weatherData.daily.time
-  const temperature_2m_min = weatherData.daily.temperature_2m_min
-  const temperature_2m_max = weatherData.daily.temperature_2m_max
+  const time = weatherData.daily.time;
+  const temperature_2m_min = weatherData.daily.temperature_2m_min;
+  const temperature_2m_max = weatherData.daily.temperature_2m_max;
   return { time, temperature_2m_min, temperature_2m_max };
 }
 
@@ -71,7 +70,7 @@ export const tools = [
     function: {
       name: "getWeatherByCity",
       description:
-        "Get the current weather for user's location and return the temperature in fareinheit",
+        "Get weather for a specific city and timeframe (today, tomorrow, weekend).",
       parameters: {
         type: "object",
         properties: {
@@ -81,9 +80,9 @@ export const tools = [
           },
           timeframe: {
             type: "string",
-            description: "get the timeframe from user query e.g. today, tomorrow, weekend",
+            enum: ["today", "tomorrow", "weekend"],
+            description: "Time period requested by the user",
           },
-
         },
         required: ["location", "timeframe"],
         additionalProperties: false,
