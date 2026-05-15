@@ -36,6 +36,7 @@ export const submitAIrequest = async (payload) => {
 
   const finalResponseObj = {
     suggestions: JSON.parse(finalResponse),
+    location: formattedResponse.location,
     dates: formattedResponse.time,
     temp_lows: formattedResponse.temperature_low,
     temp_highs: formattedResponse.temperature_high
