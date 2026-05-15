@@ -11,6 +11,7 @@ const App = () => {
   const [test, setTest] = useState("");
   const [distance, setDistance] = useState("5");
   const [loadingResponse, setLoadingResponse] = useState(false);
+  const [weatherData, setWeatherData] = useState({})
 
   return (
     <div
@@ -38,10 +39,11 @@ const App = () => {
             setDistance={setDistance}
             setLoadingResponse={setLoadingResponse}
             loadingResponse={loadingResponse}
+            setWeatherData={setWeatherData}
           />
 
           {!loadingResponse ? (
-            <ResponseComponent response={response} />
+            <ResponseComponent response={response} weatherData={weatherData} />
           ) : (
             <LoadingComponent />
           )}

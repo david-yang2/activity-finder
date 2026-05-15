@@ -35,12 +35,15 @@ export const postRequest = async (data, distance) => {
     }
 
     const result = await response.json();
-    // sanitize the response (which is a stringified JSON) to prevent XSS attacks, then parse it into a JavaScript object and return it
-    const sanitizedResults = DOMPurify.sanitize(result.activitySuggestions);
+    return result
 
-    // parse the sanitized string into a JavaScript object
-    const parsedResults = JSON.parse(sanitizedResults);
-    return parsedResults;
+    // // sanitize the response (which is a stringified JSON) to prevent XSS attacks, then parse it into a JavaScript object and return it
+    // const sanitizedResults = DOMPurify.sanitize(result.activitySuggestions);
+   
+
+    // // parse the sanitized string into a JavaScript object
+    // const parsedResults = JSON.parse(sanitizedResults);
+    // return parsedResults;
   } catch (error) {
     console.error("Error making POST request:", error);
     throw error;

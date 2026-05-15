@@ -1,6 +1,6 @@
 import { postRequest } from "../../utils/api";
 const InputComponent = (props) => {
-  const { userInput, setUserInput, setResponse, distance, setDistance, setLoadingResponse, loadingResponse } = props;
+  const { userInput, setUserInput, setResponse, distance, setDistance, setLoadingResponse, loadingResponse, setWeatherData} = props;
 
 
   // Function to handle form submission
@@ -10,8 +10,9 @@ const InputComponent = (props) => {
     setLoadingResponse(true)
     // array of object activities
     try {
-      const activitySuggestions = await postRequest(userInput, distance);
-      setResponse(activitySuggestions);
+      const {suggestions, location, dates, temp_lows, temp_highs} = await postRequest(userInput, distance);
+      setResponse(suggestions);
+      setWeatherData({location, dates, temp_lows, temp_highs})
     } catch (error) {
       setResponse({ error: error.message });
     } finally {
