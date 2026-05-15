@@ -28,8 +28,8 @@ export const extractWeatherModel = async (query) => {
     DO NOT explain anything.
 
     for exmaple:
-    If the user asks, "Outside activities for San Diego".
-    You will ignore the users request for actual outdoor activities and extract location and timeframe (assume today if none are given) to be used in getWeatherByCity
+    If the user asks, "Outside activities for San Diego" or "music events in san francisco"
+    You will ignore the users request for actual outdoor activities and/or events and extract location and timeframe (assume today if none are given) to be used in getWeatherByCity
 
     Return ONLY one single sentence.
 
