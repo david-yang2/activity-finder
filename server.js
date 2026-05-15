@@ -5,6 +5,7 @@ import { submitAIrequest } from "./utils/AIModel.js";
 import helmet from "helmet";
 import path from "path";
 import { fileURLToPath } from "url";
+import {rateLimit} from 'express-rate-limit'
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -20,9 +21,31 @@ app.use(
 );
 
 app.use(express.json());
+// Serve Vite build output on Render (and other Node hosts).
+app.use(express.static(distPath));
+
+
+// SPA fallback so routes like /, /about, etc. all return index.html.
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
+});
+
+
+const limiter = rateLimit({
+  windowMs: 1*60 *1000, 
+  limit: 2,
+  standardHeaders: 'draft-8',
+  legacyHeaders:false,
+  ipv6Subnet:56,
+  handler: (req, res) => {
+    res.status(429).json({error: "You are sending requests too quickly. Please wait and try again later"
+    })
+  }
+})
 
 
 
+app.use('/api',limiter)
 app.post("/api/openai", async (req, res) => {
 
   try {
@@ -44,14 +67,7 @@ app.post("/api/openai", async (req, res) => {
   
 });
 
-// Serve Vite build output on Render (and other Node hosts).
-app.use(express.static(distPath));
 
-
-// SPA fallback so routes like /, /about, etc. all return index.html.
-app.get(/^(?!\/api).*/, (req, res) => {
-  res.sendFile(path.join(distPath, "index.html"));
-});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
