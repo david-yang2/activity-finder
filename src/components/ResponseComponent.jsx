@@ -18,27 +18,34 @@ const ResponseComponent = ({ response, weatherData }) => {
 
   // convert yyyy-mm-dd to mm-dd-yyyy
   const convertDateFormat = (date) => {
-    const newDate = new Date(date + 'T00:00:00')
-    return newDate.toLocaleDateString('en-us')
-  }
+    const newDate = new Date(date + "T00:00:00");
+    return newDate.toLocaleDateString("en-us");
+  };
 
 
   // display weather data
   const displayWeatherData = () => {
-    const weatherContainerStyle = `bg-blue-500/30 px-3 py-4 rounded-md text-xl`
-    if (weatherData.dates.length === 1) {
+    const weatherContainerStyle = `bg-blue-500/30 px-3 py-4 rounded-md text-xl font-bold border-2 border-blue-600`;
+    if (dates.length === 1) {
       return (
         <div className={weatherContainerStyle}>
-          Looks like the weather for {location} on {convertDateFormat(dates)} will be a low of{" "}
-          {temp_lows} and a high of {temp_highs} degrees fareinheit. Here are some of my suggestions:
+          <div>{location.toUpperCase()}</div>
+          <div className="text-lg font-normal">
+            {convertDateFormat(dates)} H:{temp_highs}° and L:{temp_lows}°
+            fareinheit
+          </div>
         </div>
       );
     } else {
       return (
         <div className={weatherContainerStyle}>
-          Looks like the weather for {location} on {convertDateFormat(dates[0])} will be a low of{" "}
-          {temp_lows[0]} and a high of {temp_highs[0]} degrees fareinheit and on {convertDateFormat(dates[1])} will be
-          a low of {temp_lows[1]} and a high of {temp_highs[1]} degrees fareinheit. Here are some of my suggestions:
+          <div>{location.toUpperCase()}</div>
+          {dates.map((date, i) => (
+            <div key={i} className="text-lg font-normal">
+              {convertDateFormat(date)} H:{temp_highs[i]}° and L:{temp_lows[i]}°
+              fahrenheit
+            </div>
+          ))}
         </div>
       );
     }
