@@ -2,9 +2,9 @@ import "dotenv/config";
 import OpenAI from "openai";
 import { getWeatherByCity, tools } from "./helperFunctions.js";
 
-// JSON Schema for getWeatherModel output
+// JSON Schema for extractWeatherModel output
 
-export const getWeatherModel = async (query) => {
+export const extractWeatherModel = async (query) => {
   const aiClient = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     baseURL: process.env.OPENAI_BASE_URL,
@@ -23,24 +23,24 @@ export const getWeatherModel = async (query) => {
     - Extract timeframe
     - Use the weather observation provided
 
-    DO NOT suggest activities.
+    If the user's query asks for any activities, DO NOT suggest activities.
     DO NOT add extra information.
     DO NOT explain anything.
 
     Return ONLY one single sentence.
 
     Format:
-    "<original user query> it's <temperature summary>"
+    "<original user query>. Weather for <start_date and end_date returned from getWeatherByCity> its <temperature summary>"
 
     Examples:
 
     User: What should I do in Los Angeles this weekend?
     Output:
-    "What should I do in Los Angeles this weekend? it's a high of 76°F on Saturday and 75.6°F on Sunday, with lows of 62.1°F and 63°F."
+    "What should I do in Los Angeles this weekend? Weather for 05/16/2026 to 05/17/2026 is a high of 76°F on Saturday and 75.6°F on Sunday, with lows of 62.1°F and 63°F."
 
     User: What is the weather in Los Angeles today?
     Output:
-    "What is the weather in Los Angeles today? it's 74°F."
+    "What is the weather in Los Angeles today? Weather for 05/14/2016 is 74°F."
 
     Rules:
     - Output must be ONE sentence only
@@ -73,8 +73,7 @@ export const getWeatherModel = async (query) => {
     Observation { location: "Los Angeles", start_date:"2026-05-13", end_date:"2026-05-13
     
     `;
-  
-  console.log(query);
+    
   const messages = [
     { role: "system", content: prompt },
     { role: "user", content: query },
@@ -90,6 +89,7 @@ export const getWeatherModel = async (query) => {
     });
 
     const response = await initialResponse;
+    console.log("weathermodel usage:", response.usage)
 
     const { finish_reason: finishReason, message } = response.choices[0];
     const { tool_calls: toolCalls } = message;
@@ -97,15 +97,13 @@ export const getWeatherModel = async (query) => {
     messages.push(message);
 
     if (finishReason === "stop") {
-      console.log(message);
       return message.content;
     } else if (finishReason === "tool_calls") {
       for (const toolCall of toolCalls) {
-        console.log("this is ", i, message);
         const functionName = toolCall.function.name;
         const functionToCall = availableFunctions[functionName];
         console.log(
-          "this is the function name",
+          "function to call",
           functionName,
           "and this is the functions args",
           toolCall.function.arguments,

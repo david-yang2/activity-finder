@@ -29,7 +29,7 @@ app.post("/api/openai", async (req, res) => {
 
     // get user input from req.body and send it to the AI model, then return the response from the AI model to the frontend
     const activitySuggestions = await submitAIrequest(req.body);
-    res.json({activitySuggestions});
+    res.json(activitySuggestions);
   } catch (error){
 
     console.error("Error in /api/openai route:", error);

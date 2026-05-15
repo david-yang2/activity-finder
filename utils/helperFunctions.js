@@ -57,7 +57,7 @@ export async function getWeatherByCity({ location, timeframe }) {
     `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&start_date=${start_date}&end_date=${end_date}`,
   );
   const weatherData = await weatherRes.json();
-  console.log("this is the weatherdata", weatherData);
+  // console.log("this is the weatherdata", weatherData);
   // console.log(weatherData.current_weather.temperature)
   const time = weatherData.daily.time
   const temperature_2m_min = weatherData.daily.temperature_2m_min
