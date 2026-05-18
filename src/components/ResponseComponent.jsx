@@ -32,7 +32,7 @@ const ResponseComponent = ({ response, weatherData }) => {
           <div>{location.toUpperCase()}</div>
           <div className="text-lg font-normal">
             {convertDateFormat(dates)} H:{temp_highs}° and L:{temp_lows}°
-            fareinheit
+            Fahrenheit
           </div>
         </div>
       );
@@ -43,7 +43,7 @@ const ResponseComponent = ({ response, weatherData }) => {
           {dates.map((date, i) => (
             <div key={i} className="text-lg font-normal">
               {convertDateFormat(date)} H:{temp_highs[i]}° and L:{temp_lows[i]}°
-              fahrenheit
+              Fahrenheit
             </div>
           ))}
         </div>
@@ -56,7 +56,7 @@ const ResponseComponent = ({ response, weatherData }) => {
     <ResponseComponentCard key={index} activity={activity} index={index} />
   ));
   return (
-    <div className="flex flex-col flex-grow gap-4 w-full max-w-2xl overflow-auto rounded-lg shadow-lg px-2 py-3">
+    <div className="flex flex-col gap-4 w-full max-w-2xl max-h-[60vh] overflow-auto rounded-lg shadow-lg px-2 py-3">
       <div>{displayWeatherData()}</div>
       <div>{renderResponse}</div>
     </div>
