@@ -15,7 +15,7 @@ const App = () => {
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center p-4 relative"
+      className="h-full w-full flex items-center justify-center p-4 relative"
       style={{
         backgroundImage: "url(/backgroundImg.png)",
         backgroundSize: "cover",
