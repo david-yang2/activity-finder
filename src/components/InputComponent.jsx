@@ -1,4 +1,4 @@
-import { postRequest } from "../../utils/api";
+import { postRequest } from "../../frontend_utils/api";
 const InputComponent = (props) => {
   const { userInput, setUserInput, setResponse, distance, setDistance, setLoadingResponse, loadingResponse, setWeatherData} = props;
 

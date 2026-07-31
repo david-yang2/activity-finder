@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { submitAIrequest } from "./utils/AIModel.js";
+import { submitAIrequest } from "./backend_utils/AIModel.js";
 import helmet from "helmet";
 import path from "path";
 import { fileURLToPath } from "url";
