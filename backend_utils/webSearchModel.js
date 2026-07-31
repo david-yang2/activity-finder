@@ -28,6 +28,8 @@ export const webSearchModel = async (query, distance) => {
         - Cost (string)
 
 
+      If no time is provided. Just return the date. do not try to guess the time
+
 
       Here is an example response:
       [

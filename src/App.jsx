@@ -15,6 +15,7 @@ const App = () => {
 
   return (
     <div
+      id="app"
       className="h-full w-full flex items-center justify-center p-4 relative"
       style={{
         backgroundImage: "url(/backgroundImg.png)",
@@ -25,11 +26,11 @@ const App = () => {
     >
       {/* overlay */}
       <div className="absolute inset-0 bg-black/40 z-10"></div>
-      <div className="h-screen w-full flex flex-col max-w-3xl z-20 justify-center items-center">
+      <div className="h-full w-full flex flex-col max-w-3xl z-20 justify-center items-center">
         <Header />
         <div
           id="components"
-          className="flex flex-col w-full max-w-2xl gap-6 flex-grow overflow-hidden"
+          className="flex flex-col justify-around w-full max-w-2xl gap-6 flex-grow overflow-hidden"
         >
           <InputComponent
             userInput={userInput}
