@@ -58,7 +58,7 @@ const ResponseComponent = ({ response, weatherData }) => {
   return (
     <div className="flex flex-col gap-4 w-full max-w-2xl max-h-[60vh] overflow-auto rounded-lg shadow-lg px-2 py-3">
       <div>{displayWeatherData()}</div>
-      <div>{renderResponse}</div>
+      <div className="flex flex-col gap-3">{renderResponse}</div>
     </div>
   );
 };
