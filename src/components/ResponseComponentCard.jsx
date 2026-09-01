@@ -16,10 +16,14 @@ const ResponseComponentCard = (props) => {
   return (
     <div
       key={index}
-      className="flex flex-col gap-1border border-gray-300 rounded-lg p-4 bg-blue-400/30 shadow-md"
+      className="flex flex-col gap-1 border border-gray-300 rounded-lg p-4 bg-blue-400/30 shadow-md"
     >
+      <div className="flex justify-between items-center ">
+
       <div className="text-lg font-semibold text-black border-slate-400">
         ACTIVITY {index + 1}:
+      </div>
+      <button className="bg-blue-400 px-2 py-1 rounded-md">Invite</button>
       </div>
       <div >
         <div className={`${headerStyle}`}>Activity Name</div>
